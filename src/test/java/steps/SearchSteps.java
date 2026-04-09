@@ -1,39 +1,47 @@
 package steps;
 
-import io.cucumber.java.pt.*;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.Assert;
+import io.cucumber.java.pt.Dado;
+import io.cucumber.java.pt.Quando;
+import io.cucumber.java.pt.Entao;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import pages.SearchPage;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class SearchSteps {
 
     WebDriver driver;
-    SearchPage searchPage;
 
     @Dado("que o usuário acessa o Blog do Agi")
-    public void acessar() {
+    public void que_o_usuario_acessa_o_blog_do_agi() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        searchPage = new SearchPage(driver);
-        searchPage.acessarSite();
+        driver.manage().window().maximize();
+        driver.get("https://blog.agi.com.br"); // Ajuste para o URL correto do blog
     }
 
     @Quando("o usuário busca por {string}")
-    public void buscar(String termo) {
-        searchPage.buscar(termo);
+    public void o_usuario_busca_por(String termo) {
+        WebElement searchInput = driver.findElement(By.name("s")); // Ajuste se o campo tiver outro name
+        searchInput.sendKeys(termo);
+        searchInput.submit();
     }
 
-    @Então("deve visualizar resultados")
-    public void validarResultados() {
-        Assert.assertTrue(searchPage.obterResultados() > 0);
+    @Entao("deve visualizar resultados")
+    public void deve_visualizar_resultados() {
+        WebElement results = driver.findElement(By.cssSelector(".search-results")); // Ajuste se necessário
+        assertTrue(results.isDisplayed());
         driver.quit();
     }
 
-    @Então("não deve haver resultados")
-    public void validarSemResultados() {
-        Assert.assertTrue(searchPage.obterResultados() == 0);
+    @Entao("não deve haver resultados")
+    public void nao_deve_haver_resultados() {
+        WebElement results = driver.findElement(By.cssSelector(".search-results")); // Ajuste se necessário
+        assertFalse(results.isDisplayed());
         driver.quit();
     }
 }
