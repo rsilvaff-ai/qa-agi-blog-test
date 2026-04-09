@@ -21,26 +21,35 @@ public class SearchSteps {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.get("https://blog.agi.com.br"); // Ajuste para o URL correto do blog
+        driver.get("https://blog.agi.com.br"); 
     }
 
     @Quando("o usuário busca por {string}")
     public void o_usuario_busca_por(String termo) {
-        WebElement searchInput = driver.findElement(By.name("s")); // Ajuste se o campo tiver outro name
-        searchInput.sendKeys(termo);
-        searchInput.submit();
-    }
+    // 1. Clicar na lupa para abrir o campo de busca
+    WebElement lupa = driver.findElement(By.cssSelector("span.menu-text"));
+    lupa.click();
+
+    // 2. Esperar o campo de busca ficar visível
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("search-field")));
+
+    // 3. Digitar o termo e pressionar Enter
+    searchInput.clear();
+    searchInput.sendKeys(termo + Keys.ENTER);
+}
+
 
     @Entao("deve visualizar resultados")
     public void deve_visualizar_resultados() {
-        WebElement results = driver.findElement(By.cssSelector(".search-results")); // Ajuste se necessário
+        WebElement results = driver.findElement(By.cssSelector(".search-results")); 
         assertTrue(results.isDisplayed());
         driver.quit();
     }
 
     @Entao("não deve haver resultados")
     public void nao_deve_haver_resultados() {
-        WebElement results = driver.findElement(By.cssSelector(".search-results")); // Ajuste se necessário
+        WebElement results = driver.findElement(By.cssSelector(".search-results")); S
         assertFalse(results.isDisplayed());
         driver.quit();
     }
