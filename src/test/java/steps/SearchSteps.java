@@ -49,7 +49,7 @@ public class SearchSteps {
 
     @Entao("não deve haver resultados")
     public void nao_deve_haver_resultados() {
-        WebElement results = driver.findElement(By.cssSelector(".search-results")); S
+        WebElement results = driver.findElement(By.cssSelector(".search-results"));
         assertFalse(results.isDisplayed());
         driver.quit();
     }
